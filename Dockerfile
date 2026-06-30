@@ -50,7 +50,7 @@ COPY --from=api-builder /app/apps/api/openapi.yaml ./apps/api/openapi.yaml
 ENV NODE_ENV=production
 EXPOSE 3000 3001
 WORKDIR /app/apps/webapp
-CMD ["sh", "-c", "echo 'Starting API...' && cd /app/apps/api && node dist/index.js & sleep 3 && echo 'Starting Webapp...' && pnpm start"]
+CMD ["pnpm", "start"]
 
 # ============================================================
 # API
