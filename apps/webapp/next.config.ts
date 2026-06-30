@@ -27,7 +27,7 @@ const config: NextConfig = {
       },
       {
         source: "/v1/:path*",
-        destination: "http://localhost:3001/v1/:path*",
+        destination: "/api/v1/:path*",
       },
     ];
   },
