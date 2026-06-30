@@ -58,7 +58,7 @@ COPY --from=builder /app/turbo.json ./turbo.json
 ENV NODE_ENV=production
 
 # Expose port
-EXPOSE 3000 3001
+EXPOSE 3000
 
 # Start the application
 WORKDIR /app/apps/webapp
