@@ -27720,7 +27720,7 @@ class RefRefImpl {
       const refcodeFromQuery = urlParams.get("refcode");
       const refcodeFromCookie = getCookie("refref-refcode");
       const refcode = refcodeFromQuery || refcodeFromCookie || void 0;
-      const baseUrl = apiUrl ?? "https://staging-refref-api.strtgy.design";
+      const baseUrl = apiUrl ?? "https://staging-refref.strtgy.design";
       const widgetInitUrl = `${baseUrl}/v1/widget/init`;
       const response = await fetch(widgetInitUrl, {
         method: "POST",
