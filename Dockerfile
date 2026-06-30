@@ -38,8 +38,8 @@ RUN apk add --no-cache curl ca-certificates bash
 WORKDIR /app
 # Use api-builder's full node_modules (has everything) + webapp dist
 COPY --from=api-builder /app/node_modules ./node_modules
+COPY --from=api-builder /app/packages ./packages
 COPY --from=webapp-builder /app/apps/webapp ./apps/webapp
-COPY --from=webapp-builder /app/packages ./packages
 COPY --from=webapp-builder /app/package.json ./package.json
 COPY --from=webapp-builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=webapp-builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
@@ -50,7 +50,7 @@ COPY --from=api-builder /app/apps/api/openapi.yaml ./apps/api/openapi.yaml
 ENV NODE_ENV=production
 EXPOSE 3000 3001
 WORKDIR /app/apps/webapp
-CMD ["sh", "-c", "pnpm -F @refref/coredb db:push && pnpm start & cd /app/apps/api && node dist/index.js & wait"]
+CMD ["sh", "-c", "pnpm start & cd /app/apps/api && node dist/index.js & wait"]
 
 # ============================================================
 # API
