@@ -36,19 +36,16 @@ RUN pnpm build --filter @refref/webapp...
 FROM base-node AS webapp-runner
 RUN apk add --no-cache curl ca-certificates bash
 WORKDIR /app
-# Use api-builder's full node_modules (has everything) + webapp dist
-COPY --from=api-builder /app/node_modules ./node_modules
-COPY --from=api-builder /app/packages ./packages
+# Use webapp-builder's node_modules and packages
+COPY --from=webapp-builder /app/node_modules ./node_modules
+COPY --from=webapp-builder /app/packages ./packages
 COPY --from=webapp-builder /app/apps/webapp ./apps/webapp
 COPY --from=webapp-builder /app/package.json ./package.json
 COPY --from=webapp-builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=webapp-builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=webapp-builder /app/turbo.json ./turbo.json
-COPY --from=api-builder /app/apps/api/dist ./apps/api/dist
-COPY --from=api-builder /app/apps/api/package.json ./apps/api/package.json
-COPY --from=api-builder /app/apps/api/openapi.yaml ./apps/api/openapi.yaml
 ENV NODE_ENV=production
-EXPOSE 3000 3001
+EXPOSE 3000
 WORKDIR /app/apps/webapp
 CMD ["pnpm", "start"]
 
