@@ -103,10 +103,9 @@ export async function POST(request: NextRequest) {
     // Get widget config from program
     const widgetConfig = activeProgram.config?.widgetConfig || {};
 
-    // Build referral link
-    const referralHostUrl =
-      process.env.REFERRAL_HOST_URL || "https://staging-refref-refer.strtgy.design";
-    const referralLink = `${referralHostUrl}/${refcodeRecord.code}`;
+    // Build referral link using the webapp domain
+    const referralHostUrl = process.env.NEXT_PUBLIC_APP_URL || "https://staging-refref.strtgy.design";
+    const referralLink = `${referralHostUrl}/r/${refcodeRecord.code}`;
 
     return NextResponse.json({
       ...widgetConfig,
