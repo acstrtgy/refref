@@ -7,15 +7,15 @@ import { generateGlobalCode } from "@refref/utils";
 const { participant, refcode, program, productSecrets } = schema;
 
 // CORS headers helper
-function corsHeaders(origin?: string | null) {
-  const allowedOrigins = [
+function corsHeaders(origin?: string | null): Record<string, string> {
+  const allowedOrigins: string[] = [
     "https://strtgy.design",
     "https://staging-refref.strtgy.design",
     "http://localhost:3000",
     "http://localhost:1355",
   ];
   const allowOrigin =
-    origin && allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+    origin != null && allowedOrigins.includes(origin) ? origin : allowedOrigins[0]!;
   return {
     "Access-Control-Allow-Origin": allowOrigin,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
