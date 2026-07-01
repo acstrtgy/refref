@@ -37,23 +37,29 @@ export async function POST(request: NextRequest) {
     const externalId = token ? "authenticated" : "anonymous-" + Date.now();
 
     // Upsert participant
-    const [participantRecord] = await db
+    let [participantRecord] = await db
       .insert(participant)
       .values({
         externalId,
         productId,
       })
-      .onConflictDoUpdate({
-        target: [participant.productId, participant.externalId],
-        set: {},
-      })
+      .onConflictDoNothing()
       .returning();
 
     if (!participantRecord) {
-      return NextResponse.json(
-        { error: "Internal Server Error" },
-        { status: 500 }
-      );
+      // Participant already exists (conflict), fetch it
+      const existing = await db.query.participant.findFirst({
+        where: (p, { eq, and }) =>
+          and(eq(p.productId, productId), eq(p.externalId, externalId)),
+      });
+      if (!existing) {
+        return NextResponse.json(
+          { error: "Internal Server Error" },
+          { status: 500 }
+        );
+      }
+      // Use existing participant
+      participantRecord = existing;
     }
 
     // Get or create refcode
