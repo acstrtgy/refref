@@ -43,6 +43,12 @@ function setupWidget() {
   }
 }
 
+function getHostPageFontFamily() {
+  const fontFamily = window.getComputedStyle(document.body).fontFamily;
+
+  return fontFamily || "inherit";
+}
+
 /**
  * Creates the shadow DOM and mounts the widget.
  * Only called after store is initialized with proper config.
@@ -61,14 +67,23 @@ function mountWidget() {
 
     // Create shadow host element
     shadowHost = document.createElement("div");
+    shadowHost.style.setProperty(
+      "--refref-host-font-family",
+      getHostPageFontFamily(),
+    );
+
     const shadow = shadowHost.attachShadow({ mode: "open" });
 
     // Create main stylesheet with :root replaced by :host
-    // Reset inherited properties at shadow boundary, then apply widget styles
+    // Reset inherited properties at shadow boundary, then apply widget styles.
+    // Re-apply font family after Tailwind styles so the widget can inherit the
+    // embedding page font, with an optional --refref-font-family override.
     // @link https://github.com/tailwindlabs/tailwindcss/discussions/1935
     const sheet = new CSSStyleSheet();
     sheet.replaceSync(
-      `:host { all: initial; }\n` + styles.replaceAll(":root", ":host"),
+      `:host { all: initial; }\n` +
+        styles.replaceAll(":root", ":host") +
+        `\n:host, #widget-root { font-family: var(--refref-font-family, var(--refref-host-font-family, inherit)); }\n`,
     );
 
     // Apply CSS variable overrides from actual config

@@ -27845,6 +27845,10 @@ function setupWidget() {
     console.warn("Widget setup failed:", error);
   }
 }
+function getHostPageFontFamily() {
+  const fontFamily = window.getComputedStyle(document.body).fontFamily;
+  return fontFamily || "inherit";
+}
 function mountWidget() {
   try {
     if (widgetMounted) {
@@ -27854,11 +27858,17 @@ function mountWidget() {
     widgetMounted = true;
     const config = widgetStore.getState().config;
     shadowHost = document.createElement("div");
+    shadowHost.style.setProperty(
+      "--refref-host-font-family",
+      getHostPageFontFamily()
+    );
     const shadow = shadowHost.attachShadow({ mode: "open" });
     const sheet = new CSSStyleSheet();
     sheet.replaceSync(
       `:host { all: initial; }
-` + styles.replaceAll(":root", ":host")
+` + styles.replaceAll(":root", ":host") + `
+:host, #widget-root { font-family: var(--refref-font-family, var(--refref-host-font-family, inherit)); }
+`
     );
     if (config.cssVariables && Object.keys(config.cssVariables).length > 0) {
       const varsSheet = new CSSStyleSheet();

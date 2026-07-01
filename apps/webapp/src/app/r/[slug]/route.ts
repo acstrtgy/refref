@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { buildReferralRedirectUrl } from "@/lib/referral-redirect";
 import { db } from "@/server/db";
 import { schema } from "@refref/coredb";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   try {
     const { slug } = await params;
@@ -27,9 +28,12 @@ export async function GET(
       refcode.program?.config?.widgetConfig?.referralLink ||
       "/";
 
-    // Build redirect URL with refcode parameter
-    const targetUrl = new URL(landingPageUrl);
-    targetUrl.searchParams.set("refcode", slug);
+    // Build redirect URL with refcode parameter and resolve configured placeholders.
+    const targetUrl = buildReferralRedirectUrl({
+      destinationUrl: landingPageUrl,
+      refcode: slug,
+      requestUrl: request.url,
+    });
 
     return NextResponse.redirect(targetUrl);
   } catch (error) {
