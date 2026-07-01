@@ -6,6 +6,28 @@ import { generateGlobalCode } from "@refref/utils";
 
 const { participant, refcode, program, productSecrets } = schema;
 
+// CORS headers helper
+function corsHeaders(origin?: string | null) {
+  const allowedOrigins = [
+    "https://strtgy.design",
+    "https://staging-refref.strtgy.design",
+    "http://localhost:3000",
+    "http://localhost:1355",
+  ];
+  const allowOrigin =
+    origin && allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+  return {
+    "Access-Control-Allow-Origin": allowOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Max-Age": "86400",
+  };
+}
+
+export async function OPTIONS(request: NextRequest) {
+  return NextResponse.json({}, { headers: corsHeaders(request.headers.get("origin")) });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -107,15 +129,18 @@ export async function POST(request: NextRequest) {
     const referralHostUrl = process.env.NEXT_PUBLIC_APP_URL || "https://staging-refref.strtgy.design";
     const referralLink = `${referralHostUrl}/r/${refcodeRecord.code}`;
 
-    return NextResponse.json({
-      ...widgetConfig,
-      referralLink,
-    });
+    return NextResponse.json(
+      {
+        ...widgetConfig,
+        referralLink,
+      },
+      { headers: corsHeaders(request.headers.get("origin")) }
+    );
   } catch (error) {
     console.error("Widget init error:", error);
     return NextResponse.json(
       { error: "Internal Server Error", message: "An unexpected error occurred" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders(request.headers.get("origin")) }
     );
   }
 }
