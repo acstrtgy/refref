@@ -25,6 +25,10 @@ const config: NextConfig = {
         source: "/ingest/:path*",
         destination: "https://us.i.posthog.com/:path*",
       },
+      {
+        source: "/v1/:path*",
+        destination: "/api/v1/:path*",
+      },
     ];
   },
   skipTrailingSlashRedirect: true,

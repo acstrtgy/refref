@@ -34,6 +34,7 @@ RUN pnpm install --frozen-lockfile --filter @refref/webapp...
 
 # Build the webapp application (with placeholder env vars for build time)
 ENV DATABASE_URL="postgresql://placeholder"
+ARG CACHE_BUST=1
 ENV BETTER_AUTH_SECRET="placeholder-secret-for-build"
 RUN pnpm build --filter @refref/webapp...
 

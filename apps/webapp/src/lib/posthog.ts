@@ -30,10 +30,7 @@ const posthog = new Proxy({} as PostHog, {
   get(_target, prop: string | symbol) {
     // If PostHog is not configured, return no-op functions
     if (!posthogClient) {
-      return typeof prop === "string" &&
-        typeof posthogClient?.[prop as keyof PostHog] === "function"
-        ? () => Promise.resolve()
-        : undefined;
+      return typeof prop === "string" ? () => Promise.resolve() : undefined;
     }
 
     const original = posthogClient[prop as keyof PostHog];
